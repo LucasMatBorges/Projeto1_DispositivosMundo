@@ -1,0 +1,81 @@
+function [Vc,wJ,Raiz,AlphaJ,Ac] = Projeto_Disp()
+numPontos = 2161;
+Theta = linspace(0,1080,numPontos);
+Vc = zeros(numPontos,1);
+wJ = zeros(numPontos,1);
+Raiz = zeros(numPontos,1);
+AlphaJ = zeros(numPontos,1);
+Ac = zeros(numPontos,1);
+Theta2 = zeros(numPontos,1);
+for i = 1: numPontos
+    theta = Theta(i)*pi/180;
+    Theta2(i,1) = Theta(i);
+    rA = 0.05;
+    rB = 0.15;
+    d = 0.15;
+    L = 0.40;
+    wA =2*pi  ;
+    r = rA/rB;
+    g = 9.81
+    
+    y = i/1080
+    if y<1
+        i = i
+    else
+        i = i - 1080*y
+    end
+    angulo = 360 - i/3
+    if (angulo<=270) && (angulo>=90)
+        m(i,1) = 55
+    elseif (angulo>270)
+        m(i,1) = 50
+    elseif (angulo<90)
+        m(i,1) = 50 
+    end
+            
+    Raiz(i,1) = sqrt(L^2-(d+rB*cos(theta*r))^2);    
+   
+    wJ(i,1) = -((wA*rA*sin(theta*r))/Raiz(i,1));
+    
+    Vc(i,1) = -wA*rA*cos(theta*r)+wJ(i,1)*(d+rB*cos(theta*r));
+    
+    AlphaJ(i,1) = (((-wA^2*rA^2)/rB)*cos(theta*r)-wJ(i,1)^2*(d+rB*cos(theta*r)))/Raiz(i,1);
+    
+    Ac(i,1) = ((-wA^2*rA^2)/rB)*sin(theta*r)+AlphaJ(i,1)*(d+rB*cos(theta*r))-wJ(i,1)^2*Raiz(i,1);
+    
+    Fc(i,1) = m(i,1)*(g+Ac(i,1));
+    
+end
+figure('Name','Figura 5 - Análise de Força','NumberTitle','off')
+plot(Theta2,Fc,'bo')
+title('Força em Fc')
+xlabel(' \theta (°)')
+ylabel(' Fc (N)')
+grid
+
+figure('Name','Figura 4 - Velocidade em C','NumberTitle','off')
+plot(Theta2,Vc(:,1))
+xlabel(' \thetaa (°)')
+ylabel(' Vc (m/s)')
+grid
+
+figure('Name','Figura 3 - Velocidade angular em J','NumberTitle','off')
+plot(Theta2,wJ(:,1))
+xlabel(' \thetaa (°)')
+ylabel(' wJ (rad/s)')
+title('Força em Fc')
+grid
+
+figure('Name','Figura 2 - Aceleração angular em J','NumberTitle','off')
+plot(Theta2,AlphaJ(:,1))
+xlabel(' \thetaa (°)')
+ylabel(' AlphaJ (rad/s)')
+grid
+
+figure('Name','Figura 1 - Aceleração em C','NumberTitle','off')
+plot(Theta2,Ac(:,1))
+xlabel(' \thetaa (°)')
+ylabel(' Ac (m/s²)')
+legend('Aceleração')
+grid
+
